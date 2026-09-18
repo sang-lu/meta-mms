@@ -63,6 +63,8 @@ def load_audio(path: str) -> tuple[np.ndarray, int]:
         waveform = waveform.mean(dim=0)
     else:
         waveform = waveform[0]
+    if waveform.numel() == 0:
+        raise ValueError("Audio contains no samples")
     if sample_rate != 16_000:
         waveform = torchaudio.functional.resample(waveform, sample_rate, 16_000)
     audio = np.asarray(waveform.cpu().numpy(), dtype=np.float32).reshape(-1)

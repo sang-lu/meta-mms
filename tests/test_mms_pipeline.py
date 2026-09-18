@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 import mms_pipeline
 from mms_pipeline import MMSModels
@@ -77,6 +78,12 @@ class FakeWaveform:
         assert dim == 0
         return FakeWaveform(self.values.mean(axis=0))
 
+    def __getitem__(self, index):
+        return FakeWaveform(self.values[index])
+
+    def numel(self):
+        return self.values.size
+
     def cpu(self):
         return self
 
@@ -133,3 +140,32 @@ def test_load_audio_falls_back_to_soundfile_when_torchaudio_decoder_is_unavailab
     waveform, rate = mms_pipeline.load_audio("audio.wav")
     assert rate == 16_000
     assert waveform.tolist() == [0.5, 0.5]
+
+
+def test_load_audio_rejects_empty_soundfile_fallback_before_resampling(monkeypatch):
+    class BrokenAudioBackend:
+        @staticmethod
+        def load(_path):
+            raise ImportError("torchcodec unavailable")
+
+        class functional:
+            @staticmethod
+            def resample(*_args):
+                raise AssertionError("empty audio must not be resampled")
+
+    class FakeSoundFile:
+        @staticmethod
+        def read(_path, always_2d, dtype):
+            return np.empty((0, 1), dtype=np.float32), 8_000
+
+    class FakeTorch:
+        @staticmethod
+        def from_numpy(values):
+            return FakeWaveform(values)
+
+    monkeypatch.setattr(mms_pipeline, "_load_torchaudio", lambda: BrokenAudioBackend)
+    monkeypatch.setattr(mms_pipeline, "_load_soundfile", lambda: FakeSoundFile)
+    monkeypatch.setitem(__import__("sys").modules, "torch", FakeTorch)
+
+    with pytest.raises(ValueError, match="Audio contains no samples"):
+        mms_pipeline.load_audio("audio.wav")
