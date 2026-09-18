@@ -19,6 +19,33 @@ NeMo installation. Audio is converted to mono 16 kHz before inference.
 
 ## Server
 
+### Automatic setup scripts
+
+On Debian or Ubuntu, the scripts create `.venv`, install missing FFmpeg and
+libsndfile packages through `sudo` when necessary, install project dependencies,
+and start the server. Any arguments after the script name are passed to
+`api_server.py`.
+
+```bash
+./run_cpu.sh --port 8000 --token change-me
+```
+
+For an NVIDIA GPU, install a compatible NVIDIA driver first. The GPU script
+checks `nvidia-smi`, installs the CUDA 12.8 PyTorch wheel, verifies that PyTorch
+can use CUDA, and starts the server with `--device cuda`.
+
+```bash
+./run_gpu.sh --port 8000 --diarizer msdd --token change-me
+```
+
+Preview either script without changing the system or creating a virtual
+environment:
+
+```bash
+./run_cpu.sh --dry-run
+./run_gpu.sh --dry-run
+```
+
 ```bash
 python api_server.py \
   --host 0.0.0.0 \
