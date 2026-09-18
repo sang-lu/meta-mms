@@ -93,6 +93,9 @@ else
 fi
 
 run "${PIP[@]}" install torch torchaudio torchcodec --index-url "$TORCH_INDEX"
+if [[ $MODE == "gpu" ]] && ! run "${PIP[@]}" install flash-attn --no-build-isolation; then
+    echo "Flash Attention 2 could not be installed; continuing with BF16 default attention." >&2
+fi
 run "${PIP[@]}" install -e "$ROOT_DIR"
 
 if [[ $MODE == "gpu" && $DRY_RUN -eq 0 ]]; then

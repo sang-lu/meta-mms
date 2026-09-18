@@ -16,6 +16,8 @@ python -m pip install -e .[test]
 The first worker start downloads the MMS model and the selected diarizer models.
 Workers need a working PyTorch, Torchaudio, FFmpeg/Demucs, Transformers, and
 NeMo installation. Audio is converted to mono 16 kHz before inference.
+Signals with a peak of at least `1e-4` are peak-normalized to `0.95`; quieter
+signals are left unchanged to avoid amplifying near-silence and noise.
 
 ## Server
 
@@ -32,7 +34,9 @@ and start the server. Any arguments after the script name are passed to
 
 For an NVIDIA GPU, install a compatible NVIDIA driver first. The GPU script
 checks `nvidia-smi`, installs the CUDA 12.8 PyTorch wheel, verifies that PyTorch
-can use CUDA, and starts the server with `--device cuda`.
+can use CUDA, installs Flash Attention 2 when available, and starts the server
+with `--device cuda`. CUDA inference uses BF16 with Flash Attention 2 when the
+GPU supports BF16; it safely falls back to BF16 default attention or FP32.
 
 ```bash
 ./run_gpu.sh --port 8000 --diarizer msdd --token change-me

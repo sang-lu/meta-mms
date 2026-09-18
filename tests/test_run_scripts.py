@@ -27,6 +27,7 @@ def test_gpu_script_dry_run_selects_cuda_and_forwards_server_arguments():
     output = _dry_run("run_gpu.sh", "--diarizer", "sortformer")
 
     assert "https://download.pytorch.org/whl/cu128" in output
+    assert "flash-attn --no-build-isolation" in output
     assert "api_server.py --device cuda --diarizer sortformer" in output
 
 
