@@ -92,7 +92,7 @@ else
     DEVICE="cuda"
 fi
 
-run "${PIP[@]}" install torch torchaudio --index-url "$TORCH_INDEX"
+run "${PIP[@]}" install torch torchaudio torchcodec --index-url "$TORCH_INDEX"
 run "${PIP[@]}" install -e "$ROOT_DIR"
 
 if [[ $MODE == "gpu" && $DRY_RUN -eq 0 ]]; then

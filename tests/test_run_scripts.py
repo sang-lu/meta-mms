@@ -19,6 +19,7 @@ def test_cpu_script_dry_run_selects_cpu_and_forwards_server_arguments():
     output = _dry_run("run_cpu.sh", "--port", "9001")
 
     assert "https://download.pytorch.org/whl/cpu" in output
+    assert "torchcodec" in output
     assert "api_server.py --device cpu --port 9001" in output
 
 
