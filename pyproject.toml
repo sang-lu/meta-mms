@@ -1,0 +1,47 @@
+[project]
+name = "meta-mms-api"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "python-multipart",
+    "torch",
+    "torchaudio",
+    "soundfile",
+    "transformers",
+    "pycountry",
+    "demucs",
+    "nemo_toolkit[asr]>=2.5.2,<3",
+    "omegaconf",
+]
+
+[project.optional-dependencies]
+test = ["pytest", "httpx", "requests", "ruff"]
+
+[tool.setuptools]
+py-modules = [
+    "api_server",
+    "jobstore",
+    "language",
+    "mms_languages",
+    "mms_pipeline",
+    "schema",
+    "speaker_mapping",
+    "worker",
+    "worker_entrypoint",
+]
+
+[tool.setuptools.packages.find]
+include = ["diarization*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E203", "E731"]
