@@ -81,7 +81,7 @@ def main() -> None:
     parser.add_argument("--max-parallel", type=int, default=1)
     parser.add_argument("--model", default="facebook/mms-1b-all")
     parser.add_argument("--device", default="cpu")
-    parser.add_argument("--diarizer", default="msdd", choices=["msdd", "sortformer"])
+    parser.add_argument("--diarizer", default="sortformer", choices=["msdd", "sortformer"])
     parser.add_argument("--jobs-dir", default="./jobs")
     parser.add_argument("--token", default=None)
     args = parser.parse_args()
